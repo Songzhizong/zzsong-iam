@@ -6,7 +6,7 @@ import cn.idealframework.kotlin.toPageable
 import com.zzsong.iam.server.domain.model.user.UserDo
 import com.zzsong.iam.server.domain.model.user.UserRepository
 import com.zzsong.iam.server.domain.model.user.args.QueryUserArgs
-import com.zzsong.iam.server.infrastructure.repository.r2dbc.R2dbcUserRepository
+import com.zzsong.iam.server.infrastructure.repository.impl.r2dbc.R2dbcUserRepository
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.reactor.awaitSingle
@@ -16,6 +16,7 @@ import org.springframework.data.domain.PageImpl
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate
 import org.springframework.data.relational.core.query.Criteria
 import org.springframework.data.relational.core.query.Query
+import org.springframework.data.relational.core.query.isEqual
 import org.springframework.stereotype.Repository
 
 /**
@@ -79,15 +80,15 @@ class UserRepositoryImpl(
     }
     if (account != null && account.isNotBlank()) {
       val encrypt = UserDo.encrypt(account)
-      criteria = criteria.and("account").`is`(encrypt)
+      criteria = criteria.and("account").isEqual(encrypt)
     }
     if (email != null && email.isNotBlank()) {
       val encrypt = UserDo.encrypt(email)
-      criteria = criteria.and("email").`is`(encrypt)
+      criteria = criteria.and("email").isEqual(encrypt)
     }
     if (phone != null && phone.isNotBlank()) {
       val encrypt = UserDo.encrypt(phone)
-      criteria = criteria.and("phone").`is`(encrypt)
+      criteria = criteria.and("phone").isEqual(encrypt)
     }
 
     val countQuery = Query.query(criteria)

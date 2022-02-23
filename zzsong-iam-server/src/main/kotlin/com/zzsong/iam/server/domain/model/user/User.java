@@ -22,6 +22,8 @@ public class User {
 
   private String phone;
 
+  private boolean frozen;
+
   private LocalDateTime createdTime;
 
   private LocalDateTime updatedTime;

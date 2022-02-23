@@ -1,4 +1,4 @@
-package com.zzsong.iam.server.infrastructure.repository.r2dbc
+package com.zzsong.iam.server.infrastructure.repository.impl.r2dbc
 
 import com.zzsong.iam.server.domain.model.user.UserDo
 import org.springframework.data.r2dbc.repository.R2dbcRepository

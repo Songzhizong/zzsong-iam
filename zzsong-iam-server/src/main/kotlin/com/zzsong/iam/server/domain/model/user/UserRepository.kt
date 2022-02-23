@@ -21,7 +21,7 @@ interface UserRepository {
   suspend fun findById(id: Long): UserDo?
 
   /** 主键查询 */
-  suspend fun findRequiredById(id: Long): UserDo? {
+  suspend fun findRequiredById(id: Long): UserDo {
     return findById(id) ?: throw ResourceNotFoundException("用户不存在")
   }
 

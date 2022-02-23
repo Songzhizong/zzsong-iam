@@ -1,0 +1,16 @@
+### 创建客户端
+POST http://localhost:9091/iam/client/create
+Content-Type: application/json
+
+{
+  "name": "测试客户端",
+  "clientId": "test",
+  "clientSecret": "test",
+  "accessTokenValidity": null,
+  "refreshTokenValidity": null,
+  "accessTokenAutoRenewal": null,
+  "acceptRepetitionLogin": null
+}
+
+### 删除客户端
+POST http://localhost:9091/iam/client/delete?id=327721964007325696

@@ -2,7 +2,7 @@ logging:
   config: classpath:logback-spring-dev.xml
 spring:
   r2dbc:
-    url: "r2dbc:mysql://127.0.0.1:3306/coroutine-project?useUnicode=true&characterEncoding=utf-8&useAffectedRows=true&allowMultiQueries=true&useSSL=false&serverTimezone=Asia/Shanghai&autoReconnect=true&failOverReadOnly=false"
+    url: "r2dbc:mysql://127.0.0.1:3306/zzsong?useUnicode=true&characterEncoding=utf-8&useAffectedRows=true&allowMultiQueries=true&useSSL=false&serverTimezone=Asia/Shanghai&autoReconnect=true&failOverReadOnly=false"
     username: admin
     password: admin
     pool:

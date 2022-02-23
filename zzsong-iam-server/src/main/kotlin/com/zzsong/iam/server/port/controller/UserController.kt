@@ -23,6 +23,42 @@ import org.springframework.web.bind.annotation.RestController
 class UserController(private val userService: UserService) {
 
   /**
+   * 验证账号是否可用
+   *
+   * @author 宋志宗 on 2022/2/23
+   */
+  @PostMapping("/check/account")
+  suspend fun checkAccount(account: String?): Result<Void> {
+    Asserts.notBlank(account, "账号不能为空")
+    userService.checkAccount(account!!)
+    return Result.success()
+  }
+
+  /**
+   * 验证邮箱是否可用
+   *
+   * @author 宋志宗 on 2022/2/23
+   */
+  @PostMapping("/check/email")
+  suspend fun checkEmail(email: String?): Result<Void> {
+    Asserts.notBlank(email, "邮箱不能为空")
+    userService.checkEmail(email!!)
+    return Result.success()
+  }
+
+  /**
+   * 验证手机号是否可用
+   *
+   * @author 宋志宗 on 2022/2/23
+   */
+  @PostMapping("/check/phone")
+  suspend fun checkPhone(phone: String?): Result<Void> {
+    Asserts.notBlank(phone, "手机号不能为空")
+    userService.checkPhone(phone!!)
+    return Result.success()
+  }
+
+  /**
    * 注册
    *
    * @author 宋志宗 on 2022/2/23
@@ -33,6 +69,30 @@ class UserController(private val userService: UserService) {
     val userDo = userService.register(args!!)
     val user = userDo.toUser()
     return Result.data(user)
+  }
+
+  /**
+   * 冻结
+   *
+   * @author 宋志宗 on 2022/2/23
+   */
+  @PostMapping("/freeze")
+  suspend fun freeze(id: Long?): Result<Void> {
+    Asserts.nonnull(id, "用户id不能为空")
+    userService.freeze(id!!)
+    return Result.success()
+  }
+
+  /**
+   * 解冻
+   *
+   * @author 宋志宗 on 2022/2/23
+   */
+  @PostMapping("/unfreeze")
+  suspend fun unfreeze(id: Long?): Result<Void> {
+    Asserts.nonnull(id, "用户id不能为空")
+    userService.unfreeze(id!!)
+    return Result.success()
   }
 
   /**

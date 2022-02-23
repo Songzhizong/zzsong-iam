@@ -2,6 +2,7 @@ package com.zzsong.iam.server.domain.model.user;
 
 import cn.idealframework.crypto.AES;
 import cn.idealframework.lang.StringUtils;
+import cn.idealframework.transmission.exception.UnauthorizedException;
 import cn.idealframework.util.Asserts;
 import cn.idealframework.util.CheckUtils;
 import com.zzsong.iam.server.infrastructure.encoder.password.PasswordEncoder;
@@ -66,6 +67,9 @@ public class UserDo {
   /** 最近一次更新密码时间 */
   private long lastPasswordTime = -1;
 
+  /** 是否已被冻结 */
+  private boolean frozen = false;
+
   /** 乐观锁版本 */
   @Version
   private long version = 0;
@@ -77,6 +81,40 @@ public class UserDo {
   /** 更新时间 */
   @LastModifiedDate
   private LocalDateTime updatedTime;
+
+  /**
+   * 冻结用户
+   *
+   * @author 宋志宗 on 2022/2/23
+   */
+  public void freeze() {
+    this.setFrozen(true);
+  }
+
+  /**
+   * 解冻
+   *
+   * @author 宋志宗 on 2022/2/23
+   */
+  public void unfreeze() {
+    this.setFrozen(false);
+  }
+
+  /**
+   * 验证密码
+   *
+   * @param rawPassword     明文密码
+   * @param passwordEncoder 加密后的密码
+   * @author 宋志宗 on 2022/2/23
+   */
+  public void authenticate(@Nonnull String rawPassword,
+                           @Nonnull PasswordEncoder passwordEncoder) {
+    String encodedPassword = getPassword();
+    boolean matches = passwordEncoder.matches(rawPassword, encodedPassword);
+    if (!matches) {
+      throw new UnauthorizedException("用户名或密码错误");
+    }
+  }
 
   @Nonnull
   public static String encrypt(@Nonnull String text) {
@@ -127,6 +165,7 @@ public class UserDo {
     user.setAccount(getAccount());
     user.setEmail(getEmail());
     user.setPhone(getPhone());
+    user.setFrozen(getFrozen());
     user.setCreatedTime(getCreatedTime());
     user.setUpdatedTime(getUpdatedTime());
     return user;

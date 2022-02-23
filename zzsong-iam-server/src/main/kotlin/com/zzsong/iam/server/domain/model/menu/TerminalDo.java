@@ -1,4 +1,4 @@
-package com.zzsong.iam.server.domain.model.role;
+package com.zzsong.iam.server.domain.model.menu;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -15,15 +15,12 @@ import java.time.LocalDateTime;
  */
 @Getter
 @Setter
-@Table("iam_role")
-public class RoleDo {
+@Table("iam_terminal")
+public class TerminalDo {
 
   /** 主键 */
   @Id
   private long id = -1;
-
-  /** 是否启用 */
-  private boolean enabled = true;
 
   /** 乐观锁版本 */
   @Version
