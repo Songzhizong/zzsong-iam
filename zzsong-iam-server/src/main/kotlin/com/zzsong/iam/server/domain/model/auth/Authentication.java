@@ -2,6 +2,7 @@ package com.zzsong.iam.server.domain.model.auth;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -19,6 +20,13 @@ public class Authentication {
   private String clientId;
 
   /** 用户唯一id */
-  @Nonnull
   private long userId;
+
+  @Nonnull
+  public static Authentication create(long userId, @NotNull String clientId) {
+    Authentication authentication = new Authentication();
+    authentication.setClientId(clientId);
+    authentication.setUserId(userId);
+    return authentication;
+  }
 }

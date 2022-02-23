@@ -1,0 +1,6 @@
+### 用户名密码登录
+POST http://localhost:9091/iam/login/password
+Content-Type: application/x-www-form-urlencoded
+Authorization: Basic test test
+
+username=songzhizong&password=songzhizong@password&rememberMe=true
