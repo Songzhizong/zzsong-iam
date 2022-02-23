@@ -160,7 +160,7 @@ public class AuthClientDo {
     if (refreshTokenValidity == null) {
       refreshTokenValidity = defaultRefreshTokenValidity;
     }
-    if (refreshTokenValidity > minRefreshTokenValidity) {
+    if (refreshTokenValidity < minRefreshTokenValidity) {
       refreshTokenValidity = minRefreshTokenValidity;
     }
     this.refreshTokenValidity = refreshTokenValidity;
