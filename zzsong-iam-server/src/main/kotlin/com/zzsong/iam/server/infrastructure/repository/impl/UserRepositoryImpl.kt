@@ -1,11 +1,10 @@
 package com.zzsong.iam.server.infrastructure.repository.impl
 
-import cn.idealframework.id.IDGenerator
-import cn.idealframework.id.IDGeneratorFactory
 import cn.idealframework.kotlin.toPageable
 import com.zzsong.iam.server.domain.model.user.UserDo
 import com.zzsong.iam.server.domain.model.user.UserRepository
 import com.zzsong.iam.server.domain.model.user.args.QueryUserArgs
+import com.zzsong.iam.server.infrastructure.repository.DatabaseIDGenerator
 import com.zzsong.iam.server.infrastructure.repository.impl.r2dbc.R2dbcUserRepository
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -24,15 +23,14 @@ import org.springframework.stereotype.Repository
  */
 @Repository
 class UserRepositoryImpl(
-  idGeneratorFactory: IDGeneratorFactory,
   private val template: R2dbcEntityTemplate,
+  private val databaseIDGenerator: DatabaseIDGenerator,
   private val r2dbcUserRepository: R2dbcUserRepository
 ) : UserRepository {
-  private val idGenerator: IDGenerator = idGeneratorFactory.getGenerator("database")
 
   override suspend fun save(userDo: UserDo): UserDo {
     if (userDo.id < 1) {
-      userDo.id = idGenerator.generate()
+      userDo.id = databaseIDGenerator.generate()
       return template.insert(userDo).awaitSingle()
     }
     return template.update(userDo).awaitSingle()
@@ -44,6 +42,11 @@ class UserRepositoryImpl(
 
   override suspend fun findById(id: Long): UserDo? {
     return r2dbcUserRepository.findById(id).awaitSingleOrNull()
+  }
+
+  override suspend fun findAllById(ids: Iterable<Long>): List<UserDo> {
+    return r2dbcUserRepository.findAllById(ids)
+      .collectList().awaitSingleOrNull() ?: emptyList()
   }
 
   override suspend fun findByPhone(phone: String): UserDo? {

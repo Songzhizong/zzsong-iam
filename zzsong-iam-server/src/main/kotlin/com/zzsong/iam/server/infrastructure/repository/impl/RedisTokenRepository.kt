@@ -31,11 +31,11 @@ class RedisTokenRepository(
   private val keyPrefix: String
 
   init {
-    var tokenPrefix = iamServerProperties.tokenPrefix
-    while (tokenPrefix.endsWith(":")) {
-      tokenPrefix = tokenPrefix.substring(0, tokenPrefix.length - 1)
+    var cachePrefix = iamServerProperties.cachePrefix
+    while (cachePrefix.endsWith(":")) {
+      cachePrefix = cachePrefix.substring(0, cachePrefix.length - 1)
     }
-    keyPrefix = tokenPrefix
+    keyPrefix = "$cachePrefix:auth:token"
   }
 
   override suspend fun save(token: AccessTokenDo) {

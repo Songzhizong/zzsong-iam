@@ -34,7 +34,7 @@ import java.util.Base64;
 @Getter
 @Setter
 @CommonsLog
-@Table("iam_oauth_client")
+@Table("iam_auth_client")
 public class AuthClientDo {
   private static final long defaultAccessTokenValidity = Duration.ofMinutes(60).getSeconds();
   private static final long minAccessTokenValidity = Duration.ofMinutes(10).getSeconds();

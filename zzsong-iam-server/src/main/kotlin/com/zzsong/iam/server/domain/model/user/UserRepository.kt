@@ -25,6 +25,9 @@ interface UserRepository {
     return findById(id) ?: throw ResourceNotFoundException("用户不存在")
   }
 
+  /** 通过id列表批量查询 */
+  suspend fun findAllById(ids: Iterable<Long>): List<UserDo>
+
   /** 手机号查询 */
   suspend fun findByPhone(phone: String): UserDo?
 

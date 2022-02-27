@@ -5,4 +5,5 @@ package com.zzsong.iam.server.domain.model.role
  */
 interface RoleRepository {
 
+  suspend fun save(roleDo: RoleDo): RoleDo
 }

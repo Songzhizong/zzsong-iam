@@ -1,9 +1,11 @@
 package com.zzsong.iam.server.application
 
 import cn.idealframework.transmission.exception.BadRequestException
+import cn.idealframework.transmission.exception.ForbiddenException
 import cn.idealframework.util.Asserts
 import cn.idealframework.util.CheckUtils
 import com.zzsong.iam.server.application.dto.args.RegisterArgs
+import com.zzsong.iam.server.configure.IamServerProperties
 import com.zzsong.iam.server.domain.model.user.UserDo
 import com.zzsong.iam.server.domain.model.user.UserRepository
 import com.zzsong.iam.server.domain.model.user.args.QueryUserArgs
@@ -14,14 +16,17 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 /**
  * @author 宋志宗 on 2022/2/22
  */
 @Service
+@Transactional(rollbackFor = [Throwable::class])
 class UserService(
   private val userRepository: UserRepository,
-  private val passwordEncoder: PasswordEncoder
+  private val passwordEncoder: PasswordEncoder,
+  private val iamServerProperties: IamServerProperties
 ) {
   companion object {
     val log: Logger = LoggerFactory.getLogger(UserService::class.java)
@@ -64,6 +69,9 @@ class UserService(
    * @author 宋志宗 on 2022/2/23
    */
   suspend fun register(args: RegisterArgs): UserDo {
+    if (!iamServerProperties.registerEnabled) {
+      throw ForbiddenException("未启用注册功能")
+    }
     val phone = args.phone ?: ""
     val password = args.password ?: ""
     Asserts.notBlank(phone, "注册手机号不能为空")

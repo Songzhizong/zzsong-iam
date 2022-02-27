@@ -1,9 +1,8 @@
 package com.zzsong.iam.server.infrastructure.repository.impl
 
-import cn.idealframework.id.IDGenerator
-import cn.idealframework.id.IDGeneratorFactory
 import com.zzsong.iam.server.domain.model.auth.AuthClientDo
 import com.zzsong.iam.server.domain.model.auth.AuthClientRepository
+import com.zzsong.iam.server.infrastructure.repository.DatabaseIDGenerator
 import kotlinx.coroutines.reactor.awaitSingle
 import kotlinx.coroutines.reactor.awaitSingleOrNull
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate
@@ -16,14 +15,13 @@ import org.springframework.stereotype.Repository
  */
 @Repository
 class AuthClientRepositoryImpl(
-  idGeneratorFactory: IDGeneratorFactory,
-  private val template: R2dbcEntityTemplate
+  private val template: R2dbcEntityTemplate,
+  private val databaseIDGenerator: DatabaseIDGenerator,
 ) : AuthClientRepository {
-  private val idGenerator: IDGenerator = idGeneratorFactory.getGenerator("database")
 
   override suspend fun save(authClientDo: AuthClientDo): AuthClientDo {
     if (authClientDo.id < 1) {
-      authClientDo.id = idGenerator.generate()
+      authClientDo.id = databaseIDGenerator.generate()
       return template.insert(authClientDo).awaitSingle()
     }
     return template.update(authClientDo).awaitSingle()

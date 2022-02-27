@@ -14,6 +14,10 @@ import javax.annotation.Nonnull;
 @ConfigurationProperties("iam.server")
 public class IamServerProperties {
 
+  /** 是否开启注册功能 */
+  private boolean registerEnabled = true;
+
+  /** token key 前缀 */
   @Nonnull
-  private String tokenPrefix = "token";
+  private String cachePrefix = "iam";
 }

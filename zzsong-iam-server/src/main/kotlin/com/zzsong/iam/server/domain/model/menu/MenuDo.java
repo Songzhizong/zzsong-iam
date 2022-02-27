@@ -8,6 +8,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.annotation.Version;
 import org.springframework.data.relational.core.mapping.Table;
 
+import javax.annotation.Nonnull;
 import java.time.LocalDateTime;
 
 /**
@@ -21,6 +22,38 @@ public class MenuDo {
   /** 主键 */
   @Id
   private long id = -1;
+
+  /** 父菜单id */
+  private long pid;
+
+  /** 归属的终端id */
+  private long terminalId;
+
+  /** 数路由 */
+  @Nonnull
+  private String router = "";
+
+  /** 菜单名称 */
+  @Nonnull
+  private String name = "";
+
+  /** 菜单类型 */
+  @Nonnull
+  private MenuType type;
+
+  /** 访问的接口地址列表 */
+  @Nonnull
+  private String apis;
+
+  /** 图标 */
+  @Nonnull
+  private String icon;
+
+  @Nonnull
+  private String path;
+
+  @Nonnull
+  private String url;
 
   /** 乐观锁版本 */
   @Version

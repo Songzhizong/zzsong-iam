@@ -22,6 +22,12 @@ public class TerminalDo {
   @Id
   private long id = -1;
 
+  /** 终端名称 */
+  private String name = "";
+
+  /** 终端描述 */
+  private String description = "";
+
   /** 乐观锁版本 */
   @Version
   private long version = 0;

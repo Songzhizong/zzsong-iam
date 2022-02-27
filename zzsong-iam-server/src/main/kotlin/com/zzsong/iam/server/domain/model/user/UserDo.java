@@ -24,12 +24,12 @@ import java.util.UUID;
  * 用户模型
  * <pre>
  *  <b>indexes:</b>
- *  NORMAL:
- *    - name
  *  UNIQUE
  *    - account
  *    - email
  *    - phone
+ *  NORMAL:
+ *    - name
  * </pre>
  *
  * @author 宋志宗 on 2022/2/22

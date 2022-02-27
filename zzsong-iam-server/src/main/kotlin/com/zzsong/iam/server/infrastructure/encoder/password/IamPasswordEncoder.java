@@ -15,6 +15,7 @@ import java.util.Base64;
  */
 @Component
 public class IamPasswordEncoder implements PasswordEncoder {
+  public static final String PREFIX = "$aWFt$";
   private static final String PASSWORD_SALT = "u9*BUkjG*EFm4*M-x4LA7QnxdfK6PFdR";
 
   @Override
@@ -36,7 +37,7 @@ public class IamPasswordEncoder implements PasswordEncoder {
     String en3 = MD5.encode(en1 + PASSWORD_SALT + en2 + rawPasswordStr);
     String en3Base64 = base64Encoder.encodeToString(en3.getBytes(StandardCharsets.US_ASCII));
     String en1Base64 = base64Encoder.encodeToString(en1.getBytes(StandardCharsets.US_ASCII));
-    String s = "$2a$" + en3Base64 + en1Base64 + en2;
+    String s = PREFIX + en3Base64 + en1Base64 + en2;
     return StringUtils.replace(s, "=", "");
   }
 }
