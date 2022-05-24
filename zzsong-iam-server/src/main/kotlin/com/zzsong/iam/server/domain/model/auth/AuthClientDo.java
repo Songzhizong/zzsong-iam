@@ -2,6 +2,7 @@ package com.zzsong.iam.server.domain.model.auth;
 
 import cn.idealframework.transmission.exception.UnauthorizedException;
 import cn.idealframework.util.Asserts;
+import com.zzsong.iam.common.pojo.AuthClient;
 import com.zzsong.iam.server.infrastructure.encoder.password.PasswordEncoder;
 import lombok.Getter;
 import lombok.Setter;
@@ -44,6 +45,11 @@ public class AuthClientDo {
   /** 主键 */
   @Id
   private long id = -1;
+
+
+  /** 平台编码 */
+  @Nonnull
+  private String platform = "";
 
   /** 名称 */
   @Nonnull

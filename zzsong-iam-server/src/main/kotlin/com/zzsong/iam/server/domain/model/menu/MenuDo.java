@@ -1,5 +1,6 @@
 package com.zzsong.iam.server.domain.model.menu;
 
+import com.zzsong.iam.common.constants.MenuType;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;

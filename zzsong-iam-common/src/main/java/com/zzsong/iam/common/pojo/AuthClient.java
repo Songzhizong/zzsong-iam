@@ -1,4 +1,4 @@
-package com.zzsong.iam.server.domain.model.auth;
+package com.zzsong.iam.common.pojo;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -20,7 +20,6 @@ import java.time.LocalDateTime;
  *    - userId,roleId
  *  NORMAL:
  *    - roleId
- *    - tenantId
  * </pre>
  *
  * @author 宋志宗 on 2022/2/26
@@ -33,9 +32,6 @@ public class UserRoleDo {
   /** 主键 */
   @Id
   private long id = -1;
-
-  /** 租户id */
-  private long tenantId = -1;
 
   /** 角色id */
   private long roleId = -1;
@@ -59,7 +55,6 @@ public class UserRoleDo {
   public static UserRoleDo create(@Nonnull UserDo user,
                                   @Nonnull RoleDo role) {
     UserRoleDo userRoleDo = new UserRoleDo();
-    userRoleDo.setTenantId(role.getTenantId());
     userRoleDo.setRoleId(role.getId());
     userRoleDo.setUserId(user.getId());
     return userRoleDo;

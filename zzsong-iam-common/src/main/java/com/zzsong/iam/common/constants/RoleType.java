@@ -1,4 +1,4 @@
-package com.zzsong.iam.server.domain.model.role;
+package com.zzsong.iam.common.constants;
 
 /**
  * 角色类型

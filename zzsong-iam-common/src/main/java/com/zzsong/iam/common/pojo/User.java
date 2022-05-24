@@ -1,4 +1,4 @@
-package com.zzsong.iam.server.domain.model.tenant;
+package com.zzsong.iam.common.pojo;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -6,18 +6,21 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 
 /**
- * @author 宋志宗 on 2022/2/26
+ * @author 宋志宗 on 2022/2/23
  */
 @Getter
 @Setter
-public class Tenant {
-  private long id;
+public class User {
 
-  private long pid;
+  private long id;
 
   private String name;
 
-  private long ownerUserId;
+  private String account;
+
+  private String email;
+
+  private String phone;
 
   private boolean frozen;
 

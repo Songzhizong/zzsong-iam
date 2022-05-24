@@ -26,19 +26,19 @@ class LoginService(
   }
 
   suspend fun passwordLogin(
+    platform: String,
     username: String,
     password: String,
     rememberMe: Boolean,
     authClientDo: AuthClientDo
   ): AccessTokenDo {
-    val userDo = userRepository.findByUniqueIdentification(username)
+    val userDo = userRepository.findByUniqueIdentification(platform, username)
     if (userDo == null) {
       log.info("密码登录失败, 找不到用户 {}", username)
       throw BadRequestException("用户名或密码错误")
     }
     userDo.authenticate(password, passwordEncoder)
     return this.login(rememberMe, userDo, authClientDo)
-
   }
 
   suspend fun login(
@@ -47,8 +47,10 @@ class LoginService(
     authClientDo: AuthClientDo
   ): AccessTokenDo {
     val clientId = authClientDo.clientId
+    val platform = authClientDo.platform
     val userId = userDo.id
-    val authentication = Authentication.create(userId, clientId)
+    val username = userDo.name
+    val authentication = Authentication.create(userId, username, platform, clientId)
     if (!authClientDo.acceptRepetitionLogin) {
       tokenRepository.cleanAllToken(clientId, userId)
     }

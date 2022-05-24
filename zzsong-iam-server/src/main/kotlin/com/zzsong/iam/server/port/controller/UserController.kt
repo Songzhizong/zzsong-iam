@@ -4,9 +4,9 @@ import cn.idealframework.kotlin.toPageResult
 import cn.idealframework.transmission.PageResult
 import cn.idealframework.transmission.Result
 import cn.idealframework.util.Asserts
+import com.zzsong.iam.common.args.RegisterArgs
+import com.zzsong.iam.common.pojo.User
 import com.zzsong.iam.server.application.UserService
-import com.zzsong.iam.server.application.dto.args.RegisterArgs
-import com.zzsong.iam.server.domain.model.user.User
 import com.zzsong.iam.server.domain.model.user.args.QueryUserArgs
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -29,8 +29,8 @@ class UserController(private val userService: UserService) {
    */
   @PostMapping("/check/account")
   suspend fun checkAccount(account: String?): Result<Void> {
-    Asserts.notBlank(account, "账号不能为空")
-    userService.checkAccount(account!!)
+    Asserts.notBlank(account, "账号不能为空");account!!
+    userService.checkAccount("", account)
     return Result.success()
   }
 
@@ -41,8 +41,8 @@ class UserController(private val userService: UserService) {
    */
   @PostMapping("/check/email")
   suspend fun checkEmail(email: String?): Result<Void> {
-    Asserts.notBlank(email, "邮箱不能为空")
-    userService.checkEmail(email!!)
+    Asserts.notBlank(email, "邮箱不能为空");email!!
+    userService.checkEmail("", email)
     return Result.success()
   }
 
@@ -53,8 +53,8 @@ class UserController(private val userService: UserService) {
    */
   @PostMapping("/check/phone")
   suspend fun checkPhone(phone: String?): Result<Void> {
-    Asserts.notBlank(phone, "手机号不能为空")
-    userService.checkPhone(phone!!)
+    Asserts.notBlank(phone, "手机号不能为空");phone!!
+    userService.checkPhone("", phone)
     return Result.success()
   }
 
@@ -65,8 +65,8 @@ class UserController(private val userService: UserService) {
    */
   @PostMapping("/register")
   suspend fun register(@RequestBody(required = false) args: RegisterArgs?): Result<User> {
-    Asserts.nonnull(args, "body不能为空")
-    val userDo = userService.register(args!!)
+    Asserts.nonnull(args, "body不能为空");args!!
+    val userDo = userService.register("", args)
     val user = userDo.toUser()
     return Result.data(user)
   }

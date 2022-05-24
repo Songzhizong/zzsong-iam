@@ -1,9 +1,0 @@
-### 新建租户
-POST http://localhost:9091/iam/tenant/create
-Content-Type: application/json
-
-{
-  "name": "测试租户",
-  "ownerUserId": 328900518787153920,
-  "pid": null
-}

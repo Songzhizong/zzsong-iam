@@ -5,7 +5,10 @@ import com.zzsong.iam.server.application.AuthClientService
 import com.zzsong.iam.server.application.LoginService
 import com.zzsong.iam.server.domain.model.auth.AccessToken
 import kotlinx.coroutines.reactor.awaitSingle
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestHeader
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.server.ServerWebExchange
 
 /**
@@ -46,7 +49,6 @@ class LoginController(
    */
   @PostMapping("/password")
   suspend fun passwordLogin(
-    @RequestParam
     username: String?,
     password: String?,
     rememberMe: Boolean?,
@@ -57,13 +59,14 @@ class LoginController(
     val formData = exchange.formData.awaitSingle()
     val username1 = formData.getFirst("username") ?: username
     val password1 = formData.getFirst("password") ?: password
-    val rememberMe1 = formData.getFirst("rememberMe")?.toBoolean() ?: rememberMe
+    val rememberMe1 = formData.getFirst("rememberMe")?.toBoolean() ?: rememberMe ?: false
     Asserts.notBlank(username1, "用户名不能为空");username1!!
     Asserts.notBlank(password1, "密码不能为空");password1!!
     Asserts.notBlank(authorization, "Authorization头不能为空");authorization!!
     val authClientDo = authClientService.loadClient(authorization)
+    val platform = authClientDo.platform
     val accessTokenDo =
-      loginService.passwordLogin(username1, password1, rememberMe1 ?: false, authClientDo)
+      loginService.passwordLogin(platform, username1, password1, rememberMe1, authClientDo)
     return accessTokenDo.toAccessToken()
   }
 }

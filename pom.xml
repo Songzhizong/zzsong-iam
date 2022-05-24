@@ -15,6 +15,7 @@
   <version>1.0.0-SNAPSHOT</version>
 
   <modules>
+    <module>zzsong-iam-common</module>
     <module>zzsong-iam-server</module>
     <module>zzsong-iam-launcher</module>
   </modules>

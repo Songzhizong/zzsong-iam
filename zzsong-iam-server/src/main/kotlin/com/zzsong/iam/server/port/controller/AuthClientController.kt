@@ -3,12 +3,9 @@ package com.zzsong.iam.server.port.controller
 import cn.idealframework.transmission.Result
 import cn.idealframework.util.Asserts
 import com.zzsong.iam.server.application.AuthClientService
-import com.zzsong.iam.server.application.dto.args.CreateAuthClientArgs
-import com.zzsong.iam.server.domain.model.auth.AuthClient
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import com.zzsong.iam.common.args.CreateAuthClientArgs
+import com.zzsong.iam.common.pojo.AuthClient
+import org.springframework.web.bind.annotation.*
 
 /**
  * 客户端管理
@@ -29,7 +26,7 @@ class AuthClientController(private val authClientService: AuthClientService) {
   }
 
   /** 删除客户端 */
-  @PostMapping("/delete")
+  @DeleteMapping("/delete")
   suspend fun delete(id: Long?): Result<Void> {
     require(id != null) { "id不能为空" }
     authClientService.delete(id)

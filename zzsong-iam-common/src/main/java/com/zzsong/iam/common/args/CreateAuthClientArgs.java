@@ -1,4 +1,4 @@
-package com.zzsong.iam.server.application.dto.args;
+package com.zzsong.iam.common.args;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -29,19 +29,19 @@ interface UserRepository {
   suspend fun findAllById(ids: Iterable<Long>): List<UserDo>
 
   /** 手机号查询 */
-  suspend fun findByPhone(phone: String): UserDo?
+  suspend fun findByPlatformAndPhone(platform: String, phone: String): UserDo?
 
   /** 账号查询 */
-  suspend fun findByAccount(account: String): UserDo?
+  suspend fun findByPlatformAndAccount(platform: String, account: String): UserDo?
 
   /** 邮箱查询 */
-  suspend fun findByEmail(email: String): UserDo?
+  suspend fun findByPlatformAndEmail(platform: String, email: String): UserDo?
 
   /**
    * 通过唯一身份标识查询用户信息
    * account/email/phone
    */
-  suspend fun findByUniqueIdentification(uniqueIdentification: String): UserDo?
+  suspend fun findByUniqueIdentification(platform: String, uniqueIdentification: String): UserDo?
 
   /** 分页查询 */
   suspend fun query(args: QueryUserArgs): Page<UserDo>

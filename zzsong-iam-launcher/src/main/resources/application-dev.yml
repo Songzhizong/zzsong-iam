@@ -20,5 +20,4 @@ ideal:
     data-center-id: 0
 iam:
   server:
-    multi-tenant: true
     register-enabled: true

@@ -5,6 +5,7 @@ import cn.idealframework.lang.StringUtils;
 import cn.idealframework.transmission.exception.UnauthorizedException;
 import cn.idealframework.util.Asserts;
 import cn.idealframework.util.CheckUtils;
+import com.zzsong.iam.common.pojo.User;
 import com.zzsong.iam.server.infrastructure.encoder.password.PasswordEncoder;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,9 +26,9 @@ import java.util.UUID;
  * <pre>
  *  <b>indexes:</b>
  *  UNIQUE
- *    - account
- *    - email
- *    - phone
+ *    - platform,account
+ *    - platform,email
+ *    - platform,phone
  *  NORMAL:
  *    - name
  * </pre>
@@ -43,6 +44,10 @@ public class UserDo {
   /** 主键 */
   @Id
   private long id = -1;
+
+  /** 所属凭平台编码 */
+  @Nonnull
+  private String platform = "";
 
   /** 用户姓名 */
   @Nonnull
@@ -137,7 +142,8 @@ public class UserDo {
   }
 
   @Nonnull
-  public static UserDo create(@Nullable String name,
+  public static UserDo create(@Nonnull String platform,
+                              @Nullable String name,
                               @Nullable String account,
                               @Nullable String email,
                               @Nullable String phone,
@@ -148,6 +154,7 @@ public class UserDo {
     Asserts.notBlank(password, "密码不能为空");
     password = passwordEncoder.encode(password);
     UserDo userDo = new UserDo();
+    userDo.setPlatform(platform);
     userDo.setName(name);
     userDo.setAccount(account);
     userDo.setEmail(email);

@@ -4,7 +4,7 @@ import cn.idealframework.lang.StringUtils
 import cn.idealframework.transmission.exception.BadRequestException
 import cn.idealframework.transmission.exception.UnauthorizedException
 import cn.idealframework.util.Asserts
-import com.zzsong.iam.server.application.dto.args.CreateAuthClientArgs
+import com.zzsong.iam.common.args.CreateAuthClientArgs
 import com.zzsong.iam.server.domain.model.auth.AuthClientDo
 import com.zzsong.iam.server.domain.model.auth.AuthClientRepository
 import com.zzsong.iam.server.infrastructure.encoder.password.PasswordEncoder
@@ -45,8 +45,8 @@ class AuthClientService(
       clientSecret,
       args.accessTokenValidity,
       args.refreshTokenValidity,
-      args.accessTokenAutoRenewal,
-      args.acceptRepetitionLogin,
+      args.isAccessTokenAutoRenewal,
+      args.isAcceptRepetitionLogin,
       passwordEncoder
     )
     return authClientRepository.save(authClientDo)

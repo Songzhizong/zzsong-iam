@@ -1,7 +1,6 @@
-package com.zzsong.iam.server.domain.model.role;
+package com.zzsong.iam.server.domain.model.platform;
 
 import cn.idealframework.lang.StringUtils;
-import com.zzsong.iam.common.constants.RoleType;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
@@ -18,6 +17,8 @@ import java.time.LocalDateTime;
  * 角色模型
  * <pre>
  *  <b>indexes:</b>
+ *  UNIQUE:
+ *    - code
  *  NORMAL:
  *    - name
  * </pre>
@@ -26,23 +27,23 @@ import java.time.LocalDateTime;
  */
 @Getter
 @Setter
-@Table("iam_role")
-public class RoleDo {
+@Table("iam_platform")
+public class PlatformDo {
 
   /** 主键 */
   @Id
   private long id = -1;
 
-  /** 角色名称 */
+  /** 平台编码 */
+  @Nonnull
+  private String code = "";
+
+  /** 平台名称 */
   @Nonnull
   private String name = "";
 
-  /** 角色类型 */
-  @Nonnull
-  private RoleType type = RoleType.GENERAL;
-
-  /** 是否启用 */
-  private boolean enabled = true;
+  /** 平台拥有人用户id */
+  private long ownerUserId;
 
   /** 描述信息 */
   @Nonnull
@@ -59,24 +60,6 @@ public class RoleDo {
   /** 更新时间 */
   @LastModifiedDate
   private LocalDateTime updatedTime;
-
-  @Nonnull
-  public static RoleDo create(@Nonnull String name,
-                              @Nullable String description) {
-    RoleDo roleDo = new RoleDo();
-    roleDo.setName(name);
-    roleDo.setType(RoleType.GENERAL);
-    roleDo.setDescription(description);
-    return roleDo;
-  }
-
-  @Nonnull
-  public static RoleDo createSuperAdmin(@Nonnull String name,
-                                        @Nullable String description) {
-    RoleDo roleDo = create(name, description);
-    roleDo.setType(RoleType.SUPER_ADMIN);
-    return roleDo;
-  }
 
   public void setDescription(@Nullable String description) {
     if (StringUtils.isBlank(description)) {

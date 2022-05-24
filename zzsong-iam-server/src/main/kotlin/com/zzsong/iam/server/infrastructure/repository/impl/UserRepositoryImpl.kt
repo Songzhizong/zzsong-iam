@@ -49,23 +49,27 @@ class UserRepositoryImpl(
       .collectList().awaitSingleOrNull() ?: emptyList()
   }
 
-  override suspend fun findByPhone(phone: String): UserDo? {
+  override suspend fun findByPlatformAndPhone(platform: String, phone: String): UserDo? {
     val encrypt = UserDo.encrypt(phone)
-    return r2dbcUserRepository.findByPhone(encrypt).awaitSingleOrNull()
+    return r2dbcUserRepository.findByPlatformAndPhone(platform, encrypt).awaitSingleOrNull()
   }
 
-  override suspend fun findByAccount(account: String): UserDo? {
+  override suspend fun findByPlatformAndAccount(platform: String, account: String): UserDo? {
     val encrypt = UserDo.encrypt(account)
-    return r2dbcUserRepository.findByAccount(encrypt).awaitSingleOrNull()
+    return r2dbcUserRepository.findByPlatformAndAccount(platform, encrypt).awaitSingleOrNull()
   }
 
-  override suspend fun findByEmail(email: String): UserDo? {
+  override suspend fun findByPlatformAndEmail(platform: String, email: String): UserDo? {
     val encrypt = UserDo.encrypt(email)
-    return r2dbcUserRepository.findByEmail(encrypt).awaitSingleOrNull()
+    return r2dbcUserRepository.findByPlatformAndEmail(platform, encrypt).awaitSingleOrNull()
   }
 
-  override suspend fun findByUniqueIdentification(uniqueIdentification: String): UserDo? {
+  override suspend fun findByUniqueIdentification(
+    platform: String,
+    uniqueIdentification: String
+  ): UserDo? {
     val encrypt = UserDo.encrypt(uniqueIdentification)
+
     return r2dbcUserRepository.findByAccountOrEmailOrPhone(encrypt, encrypt, encrypt)
       .awaitSingleOrNull()
   }

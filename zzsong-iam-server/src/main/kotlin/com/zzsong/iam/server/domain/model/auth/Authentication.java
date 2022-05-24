@@ -15,6 +15,9 @@ import javax.annotation.Nonnull;
 @Setter
 public class Authentication {
 
+  /** 所属平台 */
+  private String platform;
+
   /** 客户端ID */
   @Nonnull
   private String clientId;
@@ -22,11 +25,19 @@ public class Authentication {
   /** 用户唯一id */
   private long userId;
 
+  /** 用户姓名 */
+  private String username;
+
   @Nonnull
-  public static Authentication create(long userId, @NotNull String clientId) {
+  public static Authentication create(long userId,
+                                      @Nonnull String username,
+                                      @Nonnull String platform,
+                                      @NotNull String clientId) {
     Authentication authentication = new Authentication();
+    authentication.setPlatform(platform);
     authentication.setClientId(clientId);
     authentication.setUserId(userId);
+    authentication.setUsername(username);
     return authentication;
   }
 }

@@ -11,11 +11,11 @@ import reactor.core.publisher.Mono
 @Repository
 interface R2dbcUserRepository : R2dbcRepository<UserDo, Long> {
 
-  fun findByPhone(phone: String): Mono<UserDo>
+  fun findByPlatformAndPhone(platform: String, phone: String): Mono<UserDo>
 
-  fun findByAccount(account: String): Mono<UserDo>
+  fun findByPlatformAndAccount(platform: String, account: String): Mono<UserDo>
 
-  fun findByEmail(email: String): Mono<UserDo>
+  fun findByPlatformAndEmail(platform: String, email: String): Mono<UserDo>
 
   fun findByAccountOrEmailOrPhone(account: String, email: String, phone: String): Mono<UserDo>
 }
