@@ -29,9 +29,11 @@ class AuthClientService(
 
   /** 新建 */
   suspend fun create(args: CreateAuthClientArgs): AuthClientDo {
+    val platform = args.platform
     val name = args.name
     val clientId = args.clientId
     val clientSecret = args.clientSecret
+    Asserts.notBlank(platform, "归属平台不能为空不能为空")
     Asserts.notBlank(name, "客户端名称不能为空");name!!
     Asserts.notBlank(clientId, "客户端唯一id不能为空");clientId!!
     Asserts.notBlank(clientSecret, "客户端密码不能为空");clientSecret!!
@@ -40,6 +42,7 @@ class AuthClientService(
       throw BadRequestException("客户端id已被使用")
     }
     val authClientDo = AuthClientDo.create(
+      platform,
       name,
       clientId,
       clientSecret,

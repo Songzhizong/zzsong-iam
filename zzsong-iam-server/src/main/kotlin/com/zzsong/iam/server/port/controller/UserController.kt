@@ -101,9 +101,14 @@ class UserController(private val userService: UserService) {
    * @author 宋志宗 on 2022/2/23
    */
   @PostMapping("/query")
-  suspend fun query(@RequestBody(required = false) args: QueryUserArgs?): PageResult<User> {
+  suspend fun query(
+    platform: String?,
+    @RequestBody(required = false)
+    args: QueryUserArgs?
+  ): PageResult<User> {
+    Asserts.notBlank(platform, "平台编码不能为空");platform!!
     val query = args ?: QueryUserArgs()
-    val page = userService.query(query)
+    val page = userService.query(platform, query)
     return page.map { it.toUser() }.toPageResult()
   }
 }

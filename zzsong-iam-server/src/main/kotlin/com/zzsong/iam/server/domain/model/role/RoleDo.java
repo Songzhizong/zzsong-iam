@@ -1,14 +1,16 @@
 package com.zzsong.iam.server.domain.model.role;
 
-import cn.idealframework.lang.StringUtils;
 import com.zzsong.iam.common.constants.RoleType;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.annotation.Version;
-import org.springframework.data.relational.core.mapping.Table;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.CompoundIndexes;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -16,18 +18,18 @@ import java.time.LocalDateTime;
 
 /**
  * 角色模型
- * <pre>
- *  <b>indexes:</b>
- *  NORMAL:
- *    - name
- * </pre>
  *
  * @author 宋志宗 on 2022/2/22
  */
+@Slf4j
 @Getter
 @Setter
-@Table("iam_role")
+@Document(RoleDo.DOCUMENT_NAME)
+@CompoundIndexes({
+  @CompoundIndex(name = "name", def = "{name:1}"),
+})
 public class RoleDo {
+  public static final String DOCUMENT_NAME = "zs_iam_role";
 
   /** 主键 */
   @Id
@@ -45,8 +47,8 @@ public class RoleDo {
   private boolean enabled = true;
 
   /** 描述信息 */
-  @Nonnull
-  private String description = "";
+  @Nullable
+  private String description;
 
   /** 乐观锁版本 */
   @Version
@@ -76,12 +78,5 @@ public class RoleDo {
     RoleDo roleDo = create(name, description);
     roleDo.setType(RoleType.SUPER_ADMIN);
     return roleDo;
-  }
-
-  public void setDescription(@Nullable String description) {
-    if (StringUtils.isBlank(description)) {
-      description = "";
-    }
-    this.description = description;
   }
 }

@@ -17,15 +17,15 @@ import java.time.Duration
 import javax.annotation.Nonnull
 
 /**
- * @author 宋志宗 on 2022/2/23
+ * @author 宋志宗 on 2022/6/1
  */
 @Repository
-class RedisTokenRepository(
+class TokenRepositoryImpl(
   iamServerProperties: IamServerProperties,
   private val redisTemplate: ReactiveStringRedisTemplate
 ) : TokenRepository {
   companion object {
-    val log: Logger = LoggerFactory.getLogger(RedisTokenRepository::class.java)
+    private val log: Logger = LoggerFactory.getLogger(TokenRepositoryImpl::class.java)
   }
 
   private val keyPrefix: String

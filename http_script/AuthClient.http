@@ -13,4 +13,4 @@ Content-Type: application/json
 }
 
 ### 删除客户端
-DELETE http://localhost:9091/iam/client/delete?id=340878146360311808
+DELETE http://localhost:9091/iam/client/delete?id=363320030554750976

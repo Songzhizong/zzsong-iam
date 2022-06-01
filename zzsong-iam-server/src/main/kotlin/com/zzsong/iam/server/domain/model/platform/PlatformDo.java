@@ -1,34 +1,34 @@
 package com.zzsong.iam.server.domain.model.platform;
 
-import cn.idealframework.lang.StringUtils;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.annotation.Version;
-import org.springframework.data.relational.core.mapping.Table;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.CompoundIndexes;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.time.LocalDateTime;
 
 /**
- * 角色模型
- * <pre>
- *  <b>indexes:</b>
- *  UNIQUE:
- *    - code
- *  NORMAL:
- *    - name
- * </pre>
+ * 平台模型
  *
  * @author 宋志宗 on 2022/2/22
  */
+@Slf4j
 @Getter
 @Setter
-@Table("iam_platform")
+@Document(PlatformDo.DOCUMENT_NAME)
+@CompoundIndexes({
+  @CompoundIndex(name = "code", def = "{code:1}", unique = true),
+})
 public class PlatformDo {
+  public static final String DOCUMENT_NAME = "zs_iam_platform";
 
   /** 主键 */
   @Id
@@ -42,12 +42,9 @@ public class PlatformDo {
   @Nonnull
   private String name = "";
 
-  /** 平台拥有人用户id */
-  private long ownerUserId;
-
   /** 描述信息 */
-  @Nonnull
-  private String description = "";
+  @Nullable
+  private String description;
 
   /** 乐观锁版本 */
   @Version
@@ -60,11 +57,4 @@ public class PlatformDo {
   /** 更新时间 */
   @LastModifiedDate
   private LocalDateTime updatedTime;
-
-  public void setDescription(@Nullable String description) {
-    if (StringUtils.isBlank(description)) {
-      description = "";
-    }
-    this.description = description;
-  }
 }

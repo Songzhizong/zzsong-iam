@@ -6,12 +6,14 @@ import com.zzsong.iam.common.pojo.AuthClient;
 import com.zzsong.iam.server.infrastructure.encoder.password.PasswordEncoder;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.apachecommons.CommonsLog;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.annotation.Version;
-import org.springframework.data.relational.core.mapping.Table;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.CompoundIndexes;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -32,11 +34,15 @@ import java.util.Base64;
  *
  * @author 宋志宗 on 2022/2/23
  */
+@Slf4j
 @Getter
 @Setter
-@CommonsLog
-@Table("iam_auth_client")
+@Document(AuthClientDo.DOCUMENT_NAME)
+@CompoundIndexes({
+  @CompoundIndex(name = "clientId", def = "{clientId:1}", unique = true),
+})
 public class AuthClientDo {
+  public static final String DOCUMENT_NAME = "zs_iam_auth_client";
   private static final long defaultAccessTokenValidity = Duration.ofMinutes(60).getSeconds();
   private static final long minAccessTokenValidity = Duration.ofMinutes(10).getSeconds();
   private static final long defaultRefreshTokenValidity = Duration.ofDays(15).getSeconds();
@@ -94,7 +100,8 @@ public class AuthClientDo {
   private LocalDateTime updatedTime;
 
   @Nonnull
-  public static AuthClientDo create(@Nonnull String name,
+  public static AuthClientDo create(@Nonnull String platform,
+                                    @Nonnull String name,
                                     @Nonnull String clientId,
                                     @Nonnull String clientSecret,
                                     @Nullable Long accessTokenValidity,
@@ -105,6 +112,7 @@ public class AuthClientDo {
     Asserts.notBlank(clientId, "客户端id不能为空");
     Asserts.notBlank(clientSecret, "客户端密码不能为空");
     AuthClientDo authClientDo = new AuthClientDo();
+    authClientDo.setPlatform(platform);
     authClientDo.setName(name);
     authClientDo.setClientId(clientId);
     authClientDo.setClientSecret(passwordEncoder.encode(clientSecret));

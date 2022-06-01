@@ -2,6 +2,7 @@ package com.zzsong.iam.server.domain.model.user;
 
 import cn.idealframework.crypto.AES;
 import cn.idealframework.lang.StringUtils;
+import cn.idealframework.transmission.exception.InternalServerException;
 import cn.idealframework.transmission.exception.UnauthorizedException;
 import cn.idealframework.util.Asserts;
 import cn.idealframework.util.CheckUtils;
@@ -9,11 +10,14 @@ import com.zzsong.iam.common.pojo.User;
 import com.zzsong.iam.server.infrastructure.encoder.password.PasswordEncoder;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.annotation.Version;
-import org.springframework.data.relational.core.mapping.Table;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.CompoundIndexes;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -35,10 +39,18 @@ import java.util.UUID;
  *
  * @author 宋志宗 on 2022/2/22
  */
+@Slf4j
 @Getter
 @Setter
-@Table("iam_user")
+@Document(UserDo.DOCUMENT_NAME)
+@CompoundIndexes({
+  @CompoundIndex(name = "uk_platform_account", def = "{platform:1, account:1}", unique = true),
+  @CompoundIndex(name = "uk_platform_email", def = "{platform:1, email:1}", unique = true),
+  @CompoundIndex(name = "uk_platform_phone", def = "{platform:1, phone:1}", unique = true),
+  @CompoundIndex(name = "name", def = "{name:1}"),
+})
 public class UserDo {
+  public static final String DOCUMENT_NAME = "zs_iam_user";
   private static final String AES_SEC = "AK!Cq6ywVZN.3Krd";
 
   /** 主键 */
@@ -132,6 +144,40 @@ public class UserDo {
   }
 
   @Nonnull
+  public static String encryptAccount(@Nonnull String text) {
+    return encrypt("acc:" + text);
+  }
+
+  @Nonnull
+  public static String decryptAccount(@Nonnull String text) {
+    return decrypt(text).substring(4);
+  }
+
+  @Nonnull
+  public static String encryptEmail(@Nonnull String text) {
+    return encrypt("ema:" + text);
+  }
+
+  @Nonnull
+  public static String decryptEmail(@Nonnull String text) {
+    return decrypt(text).substring(4);
+  }
+
+  @Nonnull
+  public static String encryptPhone(@Nonnull String text) {
+    return encrypt("pho:" + text);
+  }
+
+  @Nonnull
+  public static String decryptPhone(@Nonnull String text) {
+    if (!text.startsWith("pho:")) {
+      throw new InternalServerException("非法的账号格式");
+    }
+    return decrypt(text).substring(4);
+  }
+
+
+  @Nonnull
   private String generateUid() {
     return "uuid:" + UUID.randomUUID().toString().replace("-", "");
   }
@@ -190,7 +236,7 @@ public class UserDo {
     if (StringUtils.isBlank(account)) {
       return "";
     }
-    String decrypt = decrypt(account);
+    String decrypt = decryptAccount(account);
     if (isUid(decrypt)) {
       return "";
     }
@@ -207,7 +253,7 @@ public class UserDo {
     } else {
       CheckUtils.checkAccount(account, "账号必须以英文字母开头,且长度在6~64之间");
     }
-    String encrypt = encrypt(account);
+    String encrypt = encryptAccount(account);
     if (encrypt.equals(this.account)) {
       return;
     }
@@ -219,7 +265,7 @@ public class UserDo {
     if (StringUtils.isBlank(email)) {
       return "";
     }
-    String decrypt = decrypt(email);
+    String decrypt = decryptEmail(email);
     if (isUid(decrypt)) {
       return "";
     }
@@ -236,7 +282,7 @@ public class UserDo {
     } else {
       CheckUtils.checkEmail(email, "邮箱格式不正确");
     }
-    String encrypt = encrypt(email);
+    String encrypt = encryptEmail(email);
     if (encrypt.equals(this.email)) {
       return;
     }
@@ -248,7 +294,7 @@ public class UserDo {
     if (StringUtils.isBlank(phone)) {
       return "";
     }
-    String decrypt = decrypt(phone);
+    String decrypt = decryptPhone(phone);
     if (isUid(decrypt)) {
       return "";
     }
@@ -265,7 +311,7 @@ public class UserDo {
     } else {
       CheckUtils.checkMobile(phone, "手机号格式错误");
     }
-    String encrypt = encrypt(phone);
+    String encrypt = encryptPhone(phone);
     if (encrypt.equals(this.phone)) {
       return;
     }

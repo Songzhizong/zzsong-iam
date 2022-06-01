@@ -3,11 +3,14 @@ package com.zzsong.iam.server.domain.model.menu;
 import com.zzsong.iam.common.constants.MenuType;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.annotation.Version;
-import org.springframework.data.relational.core.mapping.Table;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.CompoundIndexes;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.annotation.Nonnull;
 import java.time.LocalDateTime;
@@ -15,10 +18,17 @@ import java.time.LocalDateTime;
 /**
  * @author 宋志宗 on 2022/2/22
  */
+@Slf4j
 @Getter
 @Setter
-@Table("iam_menu")
+@Document(MenuDo.DOCUMENT_NAME)
+@CompoundIndexes({
+  @CompoundIndex(name = "terminalId", def = "{terminalId:1}"),
+  @CompoundIndex(name = "router", def = "{router:1}"),
+  @CompoundIndex(name = "name", def = "{name:1}"),
+})
 public class MenuDo {
+  public static final String DOCUMENT_NAME = "zs_iam_menu";
 
   /** 主键 */
   @Id

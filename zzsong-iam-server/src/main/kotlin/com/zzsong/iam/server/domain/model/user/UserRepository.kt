@@ -44,5 +44,5 @@ interface UserRepository {
   suspend fun findByUniqueIdentification(platform: String, uniqueIdentification: String): UserDo?
 
   /** 分页查询 */
-  suspend fun query(args: QueryUserArgs): Page<UserDo>
+  suspend fun query(platform: String, args: QueryUserArgs): Page<UserDo>
 }

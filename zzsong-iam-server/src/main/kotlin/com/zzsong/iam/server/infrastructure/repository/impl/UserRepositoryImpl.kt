@@ -5,111 +5,115 @@ import com.zzsong.iam.server.domain.model.user.UserDo
 import com.zzsong.iam.server.domain.model.user.UserRepository
 import com.zzsong.iam.server.domain.model.user.args.QueryUserArgs
 import com.zzsong.iam.server.infrastructure.repository.DatabaseIDGenerator
-import com.zzsong.iam.server.infrastructure.repository.impl.r2dbc.R2dbcUserRepository
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.reactor.awaitSingle
 import kotlinx.coroutines.reactor.awaitSingleOrNull
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
-import org.springframework.data.r2dbc.core.R2dbcEntityTemplate
-import org.springframework.data.relational.core.query.Criteria
-import org.springframework.data.relational.core.query.Query
-import org.springframework.data.relational.core.query.isEqual
+import org.springframework.data.mongodb.core.ReactiveMongoTemplate
+import org.springframework.data.mongodb.core.query.Criteria
+import org.springframework.data.mongodb.core.query.Query
 import org.springframework.stereotype.Repository
 
 /**
- * @author 宋志宗 on 2022/2/22
+ * @author 宋志宗 on 2022/6/1
  */
 @Repository
 class UserRepositoryImpl(
-  private val template: R2dbcEntityTemplate,
-  private val databaseIDGenerator: DatabaseIDGenerator,
-  private val r2dbcUserRepository: R2dbcUserRepository
+  private val idGenerator: DatabaseIDGenerator,
+  private val mongoTemplate: ReactiveMongoTemplate,
 ) : UserRepository {
 
   override suspend fun save(userDo: UserDo): UserDo {
-    if (userDo.id < 1) {
-      userDo.id = databaseIDGenerator.generate()
-      return template.insert(userDo).awaitSingle()
+    val id = userDo.id
+    if (id < 1) {
+      userDo.id = idGenerator.generate()
+      return mongoTemplate.insert(userDo).awaitSingle()
     }
-    return template.update(userDo).awaitSingle()
+    return mongoTemplate.save(userDo).awaitSingle()
   }
 
   override suspend fun delete(userDo: UserDo) {
-    r2dbcUserRepository.deleteById(userDo.id).awaitSingleOrNull()
+    mongoTemplate.remove(userDo).awaitSingle()
   }
 
   override suspend fun findById(id: Long): UserDo? {
-    return r2dbcUserRepository.findById(id).awaitSingleOrNull()
+    val criteria = Criteria("id").`is`(id)
+    return mongoTemplate.findOne(Query(criteria), UserDo::class.java).awaitSingleOrNull()
   }
 
   override suspend fun findAllById(ids: Iterable<Long>): List<UserDo> {
-    return r2dbcUserRepository.findAllById(ids)
-      .collectList().awaitSingleOrNull() ?: emptyList()
+    val criteria = Criteria("id").`in`(ids)
+    return mongoTemplate.find(Query(criteria), UserDo::class.java).collectList().awaitSingle()
   }
 
   override suspend fun findByPlatformAndPhone(platform: String, phone: String): UserDo? {
-    val encrypt = UserDo.encrypt(phone)
-    return r2dbcUserRepository.findByPlatformAndPhone(platform, encrypt).awaitSingleOrNull()
+    val criteria = Criteria("platform").`is`(platform)
+      .and("phone").`is`(UserDo.encryptPhone(phone))
+    return mongoTemplate.findOne(Query(criteria), UserDo::class.java).awaitSingleOrNull()
   }
 
   override suspend fun findByPlatformAndAccount(platform: String, account: String): UserDo? {
-    val encrypt = UserDo.encrypt(account)
-    return r2dbcUserRepository.findByPlatformAndAccount(platform, encrypt).awaitSingleOrNull()
+    val criteria = Criteria("platform").`is`(platform)
+      .and("account").`is`(UserDo.encryptAccount(account))
+    return mongoTemplate.findOne(Query(criteria), UserDo::class.java).awaitSingleOrNull()
   }
 
   override suspend fun findByPlatformAndEmail(platform: String, email: String): UserDo? {
-    val encrypt = UserDo.encrypt(email)
-    return r2dbcUserRepository.findByPlatformAndEmail(platform, encrypt).awaitSingleOrNull()
+    val criteria = Criteria("platform").`is`(platform)
+      .and("email").`is`(UserDo.encryptEmail(email))
+    return mongoTemplate.findOne(Query(criteria), UserDo::class.java).awaitSingleOrNull()
   }
 
   override suspend fun findByUniqueIdentification(
     platform: String,
     uniqueIdentification: String
   ): UserDo? {
-    val encrypt = UserDo.encrypt(uniqueIdentification)
-
-    return r2dbcUserRepository.findByAccountOrEmailOrPhone(encrypt, encrypt, encrypt)
-      .awaitSingleOrNull()
+    val criteria = Criteria("platform").`is`(platform)
+      .orOperator(
+        Criteria("account").`is`(UserDo.encryptAccount(uniqueIdentification)),
+        Criteria("phone").`is`(UserDo.encryptPhone(uniqueIdentification)),
+        Criteria("email").`is`(UserDo.encryptEmail(uniqueIdentification)),
+      )
+    return mongoTemplate.findOne(Query(criteria), UserDo::class.java).awaitSingleOrNull()
   }
 
-  override suspend fun query(args: QueryUserArgs): Page<UserDo> {
+  override suspend fun query(platform: String, args: QueryUserArgs): Page<UserDo> {
     val paging = args.paging.descBy("id")
-    // 动态查询条件
     val name = args.name
     val account = args.account
     val email = args.email
     val phone = args.phone
-    var criteria = Criteria.empty()
+    var criteria = Criteria("platform").`is`(platform)
+    val or = ArrayList<Criteria>()
     if (name != null && name.isNotBlank()) {
-      criteria = criteria.and("name").like("$name%")
+      or.add(Criteria("name").regex("^.*$name.*$"))
     }
     if (account != null && account.isNotBlank()) {
-      val encrypt = UserDo.encrypt(account)
-      criteria = criteria.and("account").isEqual(encrypt)
+      or.add(Criteria("account").`is`(account))
     }
     if (email != null && email.isNotBlank()) {
-      val encrypt = UserDo.encrypt(email)
-      criteria = criteria.and("email").isEqual(encrypt)
+      or.add(Criteria("email").`is`(email))
     }
     if (phone != null && phone.isNotBlank()) {
-      val encrypt = UserDo.encrypt(phone)
-      criteria = criteria.and("phone").isEqual(encrypt)
+      or.add(Criteria("phone").`is`(phone))
     }
-
-    val countQuery = Query.query(criteria)
+    if (or.isNotEmpty()) {
+      criteria = criteria.orOperator(*or.toTypedArray())
+    }
     val pageable = paging.toPageable()
-    val selectQuery = countQuery.with(pageable)
+    val query = Query(criteria).with(pageable)
     return coroutineScope {
-      val count = async {
-        template.count(countQuery, UserDo::class.java).awaitSingleOrNull() ?: 0
+      val contentAsync = async {
+        mongoTemplate.find(query, UserDo::class.java).collectList().awaitSingle()
       }
-      val list = async {
-        template.select(selectQuery, UserDo::class.java)
-          .collectList().awaitSingleOrNull() ?: listOf()
+      val countAsync = async {
+        mongoTemplate.count(Query(criteria), UserDo::class.java).awaitSingle()
       }
-      PageImpl(list.await(), pageable, count.await())
+      val content = contentAsync.await()
+      val count = countAsync.await()
+      PageImpl(content, pageable, count)
     }
   }
 }

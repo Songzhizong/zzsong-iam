@@ -137,8 +137,8 @@ class UserService(
   }
 
   /** 查询用户列表 */
-  suspend fun query(args: QueryUserArgs): Page<UserDo> {
-    val page = userRepository.query(args)
+  suspend fun query(platform: String, args: QueryUserArgs): Page<UserDo> {
+    val page = userRepository.query(platform, args)
     val size = page.content.size
     val totalElements = page.totalElements
     log.info("查询出用户数据 {}条, 符合条件的用户总数为 {}", size, totalElements)
