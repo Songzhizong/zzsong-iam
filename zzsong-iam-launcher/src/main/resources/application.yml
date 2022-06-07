@@ -1,5 +1,5 @@
 server:
-  port: 9091
+  port: 31211
   shutdown: graceful
 spring:
   application:
@@ -7,7 +7,7 @@ spring:
   jackson:
     locale: zh_CN
     time-zone: 'GMT+8'
-    date-format: yyyy-MM-dd HH:mm:ss
+    date-format: yyyy-MM-dd HH:mm:ss.SSS
     default-property-inclusion: non_null
   main:
     allow-bean-definition-overriding: true

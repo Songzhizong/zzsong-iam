@@ -4,7 +4,13 @@ spring:
   data:
     mongodb:
       auto-index-creation: true
-      uri: mongodb://127.0.0.1:27011,127.0.0.1:27012,127.0.0.1:27013/zzsong?maxPoolSize=4
+      uri: mongodb://127.0.0.1:27011,127.0.0.1:27012,127.0.0.1:27013/zzsong?maxPoolSize=20
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: admin
+    password: admin
+    virtual-host: general
   redis:
     host: 127.0.0.1
     port: 6379
@@ -12,7 +18,7 @@ spring:
 ideal:
   snowflake:
     factory-type: redis
-    data-center-id: 0
-iam:
-  server:
-    register-enabled: true
+  event:
+    broker:
+      rabbit:
+        enable-local-model: true

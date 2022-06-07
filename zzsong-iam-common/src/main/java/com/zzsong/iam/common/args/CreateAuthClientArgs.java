@@ -3,7 +3,6 @@ package com.zzsong.iam.common.args;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
@@ -12,10 +11,6 @@ import javax.annotation.Nullable;
 @Getter
 @Setter
 public class CreateAuthClientArgs {
-
-  /** 归属平台 */
-  @Nonnull
-  private String platform = "";
 
   /**
    * 客户端名称

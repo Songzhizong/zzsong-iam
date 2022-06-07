@@ -1,0 +1,23 @@
+### 账号是否存在
+GET http://127.0.0.1:31211/iam/user/exists_account?account=zzsong
+
+### 手机号是否存在
+GET http://127.0.0.1:31211/iam/user/exists_phone?phone=18888888888
+
+### 邮箱是否存在
+GET http://127.0.0.1:31211/iam/user/exists_email?email=18888888888@189.cn
+
+### 注册账号
+POST http://127.0.0.1:31211/iam/user/register
+Content-Type: application/json
+
+
+{
+  "account": "zzsong",
+  "phone": "18888888888",
+  "email": "18888888888@189.cn",
+  "password": "JYqdvCVupsPjo9sux-WWUk9Hn7Era6o*tXyeVrTosc*_dV@pt4eh-3RG8Ht9PJvNPo6UsEAtLL4dTUNdun.TuJWeNZ*Ywgkx9o8FuKJHgWN7bTgiNfnBEGF6!s@Zc4diBCCZYHzRJJmXZMGHJbn-Yy2ahEZyA*WVjd@!yPxwH@dcw.pYE3gyEfbV8_aAhJa*n_@4@_.*W6W9!m8P6efAk2dHDW8Kmoeh*n*vU4RL9.@7urVDTW3QMA!ZTB@mAFup",
+  "name": "宋志宗",
+  "nickname": "宋某人",
+  "profilePhoto": null
+}

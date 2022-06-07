@@ -181,7 +181,7 @@ public class GeneralExceptionHandlerAdvice {
     if (message == null) {
       message = "illegal argument";
     }
-    log.info(message);
+    log.info("", ex);
     BasicResult res = new BasicResult();
     res.setSuccess(false);
     res.setHttpStatus(ResMsg.BAD_REQUEST.httpStatus());
