@@ -32,11 +32,10 @@ import java.time.LocalDateTime;
 @Setter
 @Document(UserDo.DOCUMENT_NAME)
 @CompoundIndexes({
-  @CompoundIndex(name = "uk_ident", def = "{ident:1}", unique = true),
+  @CompoundIndex(name = "uk_account", def = "{account:1}", sparse = true, unique = true),
+  @CompoundIndex(name = "uk_phone", def = "{phone:1}", sparse = true, unique = true),
+  @CompoundIndex(name = "uk_email", def = "{email:1}", sparse = true, unique = true),
   @CompoundIndex(name = "personId", def = "{personId:1}", sparse = true),
-  @CompoundIndex(name = "account", def = "{account:1}", sparse = true),
-  @CompoundIndex(name = "phone", def = "{phone:1}", sparse = true),
-  @CompoundIndex(name = "email", def = "{email:1}", sparse = true),
   @CompoundIndex(name = "name", def = "{name:1}", sparse = true),
 })
 public class UserDo {

@@ -94,27 +94,17 @@ class UserRepositoryImpl(
   }
 
   private fun generateCriteria(args: QueryUserArgs): Criteria {
-    val name = args.name
-    val account = args.account
-    val phone = args.phone
-    val email = args.email
-    var criteria = Criteria()
-    if (name != null && name.isNotBlank()) {
-      criteria = criteria.and("name").`is`(name)
-    }
-    val orCriteriaList = ArrayList<Criteria>()
-    if (account != null && account.isNotBlank()) {
-      orCriteriaList.add(Criteria("account").`is`(UserDo.encryptAccount(account)))
-    }
-    if (phone != null && phone.isNotBlank()) {
-      orCriteriaList.add(Criteria("phone").`is`(UserDo.encryptPhone(phone)))
-    }
-    if (email != null && email.isNotBlank()) {
-      orCriteriaList.add(Criteria("email").`is`(UserDo.encryptEmail(email)))
-    }
-    if (orCriteriaList.isNotEmpty()) {
-      criteria.orOperator(*orCriteriaList.toTypedArray())
-    }
+    val name = args.name?.ifBlank { null }
+    val account = args.account?.ifBlank { null }
+    val phone = args.phone?.ifBlank { null }
+    val email = args.email?.ifBlank { null }
+
+    var criteria = name?.let { Criteria("name").`is`(it) } ?: Criteria()
+    buildList {
+      account?.let { add(Criteria("account").`is`(UserDo.encryptAccount(it))) }
+      phone?.let { add(Criteria("phone").`is`(UserDo.encryptPhone(it))) }
+      email?.let { add(Criteria("email").`is`(UserDo.encryptEmail(it))) }
+    }.ifEmpty { null }?.let { criteria = criteria.orOperator(*it.toTypedArray()) }
     return criteria
   }
 }

@@ -46,7 +46,7 @@ class UserApi(private val userService: UserService) {
    */
   @GetMapping("/ids")
   suspend fun finAllById(ids: String?): Result<List<User>> {
-    if (ids == null || ids.isBlank()) {
+    if (ids.isNullOrBlank()) {
       log.info("ids为空")
       return Result.success(emptyList())
     }

@@ -54,11 +54,8 @@ public class IdealBootWebMessageConverterAutoConfigure implements WebFluxConfigu
     longToStrongModule.addSerializer(Long.TYPE, ToStringSerializer.instance);
 
     ObjectMapper objectMapper = new ObjectMapper()
-      // 对于空的对象转json的时候不抛出错误
       .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
-      // 禁用遇到未知属性抛出异常
       .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-      // 序列化BigDecimal时不使用科学计数法输出
       .configure(JsonGenerator.Feature.WRITE_BIGDECIMAL_AS_PLAIN, true)
       .setDateFormat(new SimpleDateFormat(DateTimes.YYYY_MM_DD_HH_MM_SS_SSS))
       .registerModule(JAVA_TIME_MODULE)
